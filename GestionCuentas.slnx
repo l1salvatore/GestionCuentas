@@ -1,0 +1,5 @@
+<Solution>
+  <Folder Name="/Services/">
+    <Project Path="Services/GC.Auth.API/GC.Auth.API.csproj" />
+  </Folder>
+</Solution>
