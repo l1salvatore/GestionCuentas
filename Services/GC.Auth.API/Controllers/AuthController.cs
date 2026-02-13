@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GC.Auth.API.Data;   // El DbContext
 using GC.Auth.API.Models; // El modelo User
-using GC.Auth.API.Inputs;   // El Input
+using GC.Auth.API.DTOs;   // El DTOs de entrada
 using GC.Auth.API.Helpers; // La clase de hashing de contraseñas
 
 
@@ -22,7 +22,7 @@ namespace GC.Auth.API.Controllers
 
         // POST: api/auth/register
         [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterInput input)
+        public async Task<IActionResult> Register(RegisterDto input)
         {
 
             // Se valida que el email no exista ya en la base de datos
@@ -48,7 +48,7 @@ namespace GC.Auth.API.Controllers
 
         // POST: api/auth/login
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginInput dto)
+        public async Task<IActionResult> Login(LoginDto dto)
         {
             // Se busca el usuario por mail
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);

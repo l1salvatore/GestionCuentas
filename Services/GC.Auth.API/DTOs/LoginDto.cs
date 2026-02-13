@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace GC.Auth.API.Inputs
+namespace GC.Auth.API.DTOs
 {
-    public class RegisterInput
+    public class LoginDto
     {
         [Required]
         [EmailAddress]
