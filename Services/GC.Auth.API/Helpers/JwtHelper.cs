@@ -7,7 +7,7 @@ namespace GC.Auth.API.Helpers
 {
     public static class JwtHelper
     {
-        // Configuración de seguridad (Estándares OWASP 2024)
+        // Configuración de seguridad
         public static string CreateJwtToken(User user)
         {
             return GenerateJwtToken(user);
@@ -43,7 +43,7 @@ namespace GC.Auth.API.Helpers
             // Si no se encuentra el archivo de llave, lanzamos una excepción (esto debería ser manejado adecuadamente en producción)
             if (!System.IO.File.Exists(keyPath))
             {
-                throw new FileNotFoundException($"No se encontró el archivo de llave en: {keyPath}");
+                throw new FileNotFoundException($"key file not found at path: {keyPath}");
             }
 
             // Cargar la llave RSA desde el archivo PEM

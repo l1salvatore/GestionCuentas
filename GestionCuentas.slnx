@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/Services/">
+    <Project Path="Services/GC.Account.API/GC.Account.API.csproj" />
     <Project Path="Services/GC.Auth.API/GC.Auth.API.csproj" />
   </Folder>
 </Solution>
