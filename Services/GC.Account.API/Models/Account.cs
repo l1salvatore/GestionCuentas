@@ -10,7 +10,7 @@ namespace GC.Account.API.Models
 
         // Relación con el usuario de autenticación (UserId es la clave foránea)
         [Required]
-        public int UserId { get; set; } 
+        public int UserId { get; set; }
 
         [Required]
         [MaxLength(100)]
@@ -20,9 +20,6 @@ namespace GC.Account.API.Models
         [MaxLength(100)]
         public string LastName { get; set; } = string.Empty;
 
-        [MaxLength(50)]
-        public string? Alias { get; set; }
-
         [Column(TypeName = "decimal(18,2)")]
         public decimal Balance { get; set; } = 0;
 
@@ -30,5 +27,8 @@ namespace GC.Account.API.Models
 
         // Propiedad de navegación para las transacciones (Tu historial)
         public virtual ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
+
+        [NotMapped]
+        public virtual string Email { get; set; } = string.Empty;
     }
 }
