@@ -43,31 +43,61 @@ namespace GC.Account.API.Core
 
         public async Task DepositAsync(int accountId, decimal amount)
         {
-            // // 1. Validaciones
-            // if (amount <= 0) throw new ArgumentException("El monto debe ser positivo.");
+            // Validación básica
+            if (amount <= 0) throw new ArgumentException("El monto debe ser positivo.");
 
-            // var account = await _context.Accounts
-            //         .FirstOrDefaultAsync(a => a.Id == accountId);
+            // Para manejar la concurrencia, vamos a implementar un retry simple.
+            int maxRetries = 3;
 
-            // if (account == null) throw new KeyNotFoundException("Cuenta no encontrada.");
+            for (int i = 0; i < maxRetries; i++)
+            {
+                try
+                {
+                    // Se lee la cuenta (Incluye el RowVersion)
+                    var account = await _context.Accounts.FindAsync(accountId);
 
-            // // Actualizar el saldo
-            // account.Balance += amount;
+                    if (account == null) throw new KeyNotFoundException("Cuenta no encontrada.");
 
-            // // Registrar la transacción
-            // var transactionHistory = new Transaction
-            // {
-            //     AccountId = accountId,
-            //     Amount = amount,
-            //     Type = TransactionType.Deposit, 
-            //     TransactionDate = DateTime.UtcNow,
-            // };
+                    // Se actualiza el balance en memoria (No se ha guardado aún, por lo que el RowVersion sigue siendo el mismo)
+                    account.Balance += amount;
 
-            // // Agregar la transacción al contexto
-            // _context.Transactions.Add(transactionHistory);
+                    // Se agrega la transacción al contexto (Relación)
+                    _context.Transactions.Add(new Transaction
+                    {
+                        AccountId = accountId,
+                        Amount = amount,
+                        Type = TransactionType.Deposit,
+                        TransactionDate = DateTime.UtcNow,
+                    });
 
-            // // Guardar los cambios en la base de datos (saldo actualizado + nueva transacción)
-            // await _context.SaveChangesAsync();
+                    // Se intenta guardar. 
+                    // Si nadie más modificó esta cuenta desde que la leímos, 
+                    // el RowVersion coincide y se guarda sin problemas.
+                    await _context.SaveChangesAsync();
+
+                    // Si llegamos acá, salió todo bien. Salimos del loop/método.
+                    return;
+                }
+                // Si alguien más modificó esta cuenta después de que la leímos, el RowVersion no coincide y EF lanza esta excepción.
+                catch (DbUpdateConcurrencyException)
+                {
+                   
+                    // Limpiamos el ChangeTracker para evitar conflictos con las entidades que ya tenemos cargadas
+                    // (incluyendo la cuenta que falló)
+                    _context.ChangeTracker.Clear();
+
+                    // Si ya intentamos el máximo de reintentos,
+                    // lanzamos una excepción para que el cliente sepa que intente más tarde.
+                    if (i == maxRetries - 1)
+                    {
+                        throw new Exception("Ocurrió un error al procesar tu depósito. Por favor, intenta nuevamente.");
+                    }
+
+                    // Si no, el loop vuelve a arrancar (i++), 
+                    // vuelve a leer el saldo (que ahora ya tiene el cambio del otro hilo)
+                    // y vuelve a sumar nuestro monto sobre el saldo actualizado.
+                }
+            }
         }
 
         public Task<Models.Account?> GetAccountByUserIdAsync(int userId)

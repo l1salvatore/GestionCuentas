@@ -24,6 +24,9 @@ namespace GC.Account.API.Models
         public decimal Balance { get; set; } = 0;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        
+        [Timestamp]
+        public byte[]? RowVersion { get; set; }
 
         // Propiedad de navegación para las transacciones (Tu historial)
         public virtual ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();

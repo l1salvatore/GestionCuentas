@@ -54,6 +54,38 @@ namespace GC.Account.API.Controllers
             }
         }
 
+        // POST: api/account/deposit
+        [HttpPost("deposit")]
+        public async Task<IActionResult> Deposit([FromBody] DepositRequest request)
+        {
+            try
+            {
+                // Buscamos el claim "NameIdentifier" (que suele ser el 'sub' o 'uid' del token) 
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                if (userIdClaim == null) return Unauthorized("El token no contiene un ID de usuario válido.");
+
+                // Parseamos el ID que venía encriptado en el token
+                int userId = int.Parse(userIdClaim.Value);
+
+                // Llamamos al servicio para crear la cuenta, pasando el ID del usuario y los datos del request
+                var account = await _accountService.GetAccountByUserIdAsync(userId);
+
+                // Agregamos el email al DTO de respuesta (opcional, pero útil para el frontend)
+                if (account == null) return NotFound("No tenés una cuenta creada todavía.");
+
+                // Intentamos hacer el depósito. Si hay un choque de concurrencia, el servicio se encargará de reintentar automáticamente.
+                await _accountService.DepositAsync(account.Id, request.Amount);
+
+                // Si llegamos acá, el depósito se realizó con éxito (sin excepciones no controladas)
+                return Ok(new { message = "Depósito realizado con éxito." });
+            }
+            catch (Exception ex)
+            {
+                // Cualquier excepción que no hayamos manejado específicamente se traduce en un error 500 para el cliente, con un mensaje genérico.
+                return StatusCode(500, new { message = "Error interno.", details = ex.Message });
+            }
+        }
+
         // GET: api/account
         [HttpGet]
         public async Task<IActionResult> GetMyAccount()
