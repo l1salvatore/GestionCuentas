@@ -20,18 +20,19 @@ services:
   keygen:
     image: alpine:latest
     container_name: sg_keygen
-    # Conecta la carpeta 'Keys' de Windows con el container
     volumes:
       - ./Keys:/keys
-    # Comando instala OpenSSL y crea las llaves si no existen
     command: >
-      /bin/sh -c "apk add --no-cache openssl &&
+      /bin/sh -c "
+      echo 'Iniciando Keygen...';
+      mkdir -p /keys; 
+      apk add --no-cache openssl;
       if [ ! -f /keys/private_key.pem ]; then
         echo 'Generando llaves RSA...';
         openssl genrsa -out /keys/private_key.pem 2048;
         openssl rsa -pubout -in /keys/private_key.pem -out /keys/public_key.pem;
         chmod 666 /keys/*.pem;
-        echo 'Llaves listas.';
+        echo '¡Éxito! Carpeta Keys creada y llaves generadas.';
       else
         echo 'Las llaves ya existen. No hago nada.';
       fi"
