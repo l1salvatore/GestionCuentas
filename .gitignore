@@ -53,5 +53,5 @@ CodeCoverage/
 TestResult.xml
 nunit-*.xml
 
-Keys/*.pem
-!Keys/.gitkeep
+# La carpeta Keys contiene las llaves privadas y públicas para JWT, no deben ser versionadas
+Keys/*

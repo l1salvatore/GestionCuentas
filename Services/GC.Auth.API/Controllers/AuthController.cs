@@ -65,9 +65,9 @@ namespace GC.Auth.API.Controllers
                 var token = JwtHelper.CreateJwtToken(user);
                 return Ok(new { token });
             }
-            catch (FileNotFoundException)
+            catch (FileNotFoundException ex)
             {
-                return StatusCode(500, "Error del servidor: No se encontró la llave privada para firmar el token.");
+                return StatusCode(500, ex.Message);
             }
         }      
     }

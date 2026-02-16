@@ -73,6 +73,21 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<GC.Account.API.Data.AccountDbContext>();
+        
+        context.Database.Migrate(); 
+        Console.WriteLine("✅ Base de datos de Account migrada exitosamente.");
+    }
+    catch (Exception)
+    {
+    }
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

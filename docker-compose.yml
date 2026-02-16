@@ -1,41 +1,88 @@
 services:
   # ---------------------------------------------------------
-  # BASE DE DATOS
-  # ---------------------------------------------------------
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: gestion_cuentas_container
-    environment:
-      - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=Admin123!
-    ports:
-      - "1433:1433"
-    volumes:
-      - sql_data:/var/opt/mssql
-    restart: always
-
-  # ---------------------------------------------------------
   # KEYGEN
   # ---------------------------------------------------------
   keygen:
     image: alpine:latest
     container_name: sg_keygen
     volumes:
-      - ./Keys:/keys
+      - ./Keys:/Keys
     command: >
       /bin/sh -c "
       echo 'Iniciando Keygen...';
-      mkdir -p /keys; 
+      mkdir -p /Keys; 
       apk add --no-cache openssl;
-      if [ ! -f /keys/private_key.pem ]; then
+      if [ ! -f /Keys/private_key.pem ]; then
         echo 'Generando llaves RSA...';
-        openssl genrsa -out /keys/private_key.pem 2048;
-        openssl rsa -pubout -in /keys/private_key.pem -out /keys/public_key.pem;
-        chmod 666 /keys/*.pem;
+        openssl genrsa -out /Keys/private_key.pem 2048;
+        openssl rsa -pubout -in /Keys/private_key.pem -out /Keys/public_key.pem;
+        chmod 666 /Keys/*.pem;
         echo '¡Éxito! Carpeta Keys creada y llaves generadas.';
       else
         echo 'Las llaves ya existen. No hago nada.';
       fi"
+      
+  # ---------------------------------------------------------
+  # BASE DE DATOS
+  # ---------------------------------------------------------
+  sqlserver:
+      image: mcr.microsoft.com/mssql/server:2022-latest
+      container_name: gestion_cuentas_db
+      environment:
+        - ACCEPT_EULA=Y
+        - MSSQL_SA_PASSWORD=Admin123!
+      ports:
+        - "1433:1433"
+      volumes:
+        - sql_data:/var/opt/mssql
+      restart: always
+      healthcheck:
+        test: ["CMD-SHELL", "grep -q 'Recovery is complete' /var/opt/mssql/log/errorlog || exit 1"]
+        interval: 10s
+        retries: 10
+        start_period: 10s
+        timeout: 5s
 
+  # ---------------------------------------------------------
+  # AUTH API (Aplicación)
+  # ---------------------------------------------------------
+  auth-api:
+    build:
+      context: ./Services/GC.Auth.API
+      dockerfile: Dockerfile
+    container_name: gc_auth_api
+    ports:
+      - "5000:8080" 
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=GC_Auth_DB;User Id=sa;Password=Admin123!;TrustServerCertificate=True;
+      - JwtSettings__PublicKeyPath=/Keys/public_key.pem
+    volumes:
+      - ./Keys:/Keys
+    depends_on:
+      keygen:
+        condition: service_completed_successfully
+      sqlserver:
+        condition: service_healthy
+
+  # ---------------------------------------------------------
+  # ACCOUNT API (Aplicación)
+  # ---------------------------------------------------------
+  account-api:
+    build:
+      context: ./Services/GC.Account.API 
+      dockerfile: Dockerfile
+    container_name: gc_account_api
+    ports:
+      - "5001:8080" 
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=GC_Account_DB;User Id=sa;Password=Admin123!;TrustServerCertificate=True;
+      - JwtSettings__PublicKeyPath=/Keys/public_key.pem
+    volumes:
+      - ./Keys:/Keys
+    depends_on:
+      keygen:
+        condition: service_completed_successfully
+      sqlserver:
+        condition: service_healthy
 volumes:
   sql_data:
