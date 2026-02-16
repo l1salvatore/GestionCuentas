@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using GC.Account.API.Core;
+using GC.Account.API.Services.Withdraw.Rules;
 
 // Configuración de seguridad (Estándares OWASP 2024)
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +14,8 @@ builder.Services.AddDbContext<AccountDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IAccountWithdrawRule, SufficientBalanceRule>();
+builder.Services.AddScoped<IAccountWithdrawRule, DailyLimitRule>();
 
 // Se agrega el servicio de controladores
 builder.Services.AddControllers();

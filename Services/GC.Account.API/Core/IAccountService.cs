@@ -8,7 +8,7 @@ namespace GC.Account.API.Core
         Task<Models.Account> CreateAccountAsync(int userId, string firstName, string lastName);
 
         // Busca la cuenta usando el ID del usuario (útil para el login inicial)
-        Task<Models.Account?> GetAccountByUserIdAsync(int userId);
+        Task<Models.Account> GetAccountByUserIdAsync(int userId);
 
         // Devuelve el saldo actual
         Task<decimal> GetBalanceAsync(int accountId);
