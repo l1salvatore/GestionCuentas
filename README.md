@@ -1,4 +1,4 @@
-# GestionCuentas - Sistema de Gestión de Cuentas Bancarias
+# GestionCuentas - Sistema de Gestión de Cuentas
 
 ## Descripción del Proyecto
 
