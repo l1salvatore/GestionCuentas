@@ -31,7 +31,8 @@ namespace GC.Account.API.Core
         /// <exception cref="KeyNotFoundException"></exception>
         public async Task<Models.Account> GetAccountByUserIdAsync(int userId)
         {
-            var account = await _context.Accounts.FindAsync(userId);
+            var account = await _context.Accounts
+                .FirstOrDefaultAsync(a => a.UserId == userId);
 
             if (account == null) throw new KeyNotFoundException("Cuenta no encontrada.");
 
