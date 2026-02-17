@@ -62,3 +62,12 @@ VALUES (N'20260215131145_AddConcurrencyToken', N'10.0.3');
 COMMIT;
 GO
 
+BEGIN TRANSACTION;
+CREATE UNIQUE INDEX [IX_Accounts_UserId] ON [Accounts] ([UserId]);
+
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20260217171857_AddUniqueUserIdToAccounts', N'10.0.3');
+
+COMMIT;
+GO
+
