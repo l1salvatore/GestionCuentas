@@ -17,7 +17,7 @@ Este proyecto fue desarrollado con las siguientes características:
 
 La aplicación permite a los usuarios autenticados realizar las siguientes acciones:
 
-1. **Crear una cuenta** - Registrar una nueva cuenta bancaria
+1. **Crear una cuenta** - Registrar una nueva cuenta
 2. **Realizar depósitos** - Incrementar el saldo de una cuenta
 3. **Realizar retiros** - Decrementar el saldo de una cuenta (con validaciones)
 4. **Consultar saldo** - Obtener el saldo actual de una cuenta
