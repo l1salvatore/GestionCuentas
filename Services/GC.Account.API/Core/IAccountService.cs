@@ -11,12 +11,12 @@ namespace GC.Account.API.Core
         Task<Models.Account> GetAccountByUserIdAsync(int userId);
 
         // Devuelve el saldo actual
-        Task<decimal> GetBalanceAsync(int accountId);
+        Task<decimal> GetBalanceAsync(int userId);
 
         // Suma saldo y registra transacción
-        Task DepositAsync(int accountId, decimal amount);
+        Task DepositAsync(int userId, decimal amount);
 
         // Resta saldo (validando reglas) y registra transacción
-        Task WithdrawAsync(int accountId, decimal amount);
+        Task WithdrawAsync(int userId, decimal amount);
     }
 }

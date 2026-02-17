@@ -110,6 +110,38 @@ namespace GC.Account.API.Controllers
             }
         }
 
+        // GET: api/account/balance
+        [HttpGet("balance")]
+        public async Task<IActionResult> GetBalance()
+        {
+            try
+            {
+                // Buscamos el claim "NameIdentifier" para obtener el ID del usuario
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                if (userIdClaim == null) return Unauthorized("El token no contiene un ID de usuario válido.");
+
+                // Parseamos el ID del usuario desde el claim
+                int userId = int.Parse(userIdClaim.Value);
+
+                // Llamamos al servicio para obtener el balance de la cuenta vinculada a ese ID de usuario
+                var account = await _accountService.GetAccountByUserIdAsync(userId);
+                decimal balance = account.Balance;
+
+                // Devolvemos el balance encontrado con un status 200 OK
+                return Ok(new { balance });
+            }
+            catch (KeyNotFoundException)
+            {
+                // Si el servicio lanza una excepción de "no encontrado", devolvemos 404 con el mensaje específico
+                return NotFound("No tenés una cuenta creada todavía.");
+            }
+            catch (Exception ex)
+            {
+                // Cualquier otra excepción se traduce en un error 500 para el cliente, con un mensaje genérico.
+                return StatusCode(500, new { message = "Error interno.", details = ex.Message });
+            }
+        }
+
         // GET: api/account
         [HttpGet]
         public async Task<IActionResult> GetMyAccount()
