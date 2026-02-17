@@ -85,7 +85,7 @@ namespace GC.Account.API.Core
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="Exception"></exception>
         /// <exception cref="KeyNotFoundException"></exception>
-        public async Task DepositAsync(int accountId, decimal amount)
+        public async Task DepositAsync(int userId, decimal amount)
         {
             // Validación básica
             if (amount <= 0) throw new ArgumentException("El monto debe ser positivo.");
@@ -98,7 +98,7 @@ namespace GC.Account.API.Core
                 try
                 {
 
-                    var account = await GetAccountByUserIdAsync(accountId);
+                    var account = await GetAccountByUserIdAsync(userId);
 
                     // Se actualiza el balance en memoria (No se ha guardado aún, por lo que el RowVersion sigue siendo el mismo)
                     account.Balance += amount;
@@ -168,9 +168,9 @@ namespace GC.Account.API.Core
         /// <param name="amount"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public async Task WithdrawAsync(int accountId, decimal amount)
+        public async Task WithdrawAsync(int userId, decimal amount)
         {
-            var account = await GetAccountByUserIdAsync(accountId);
+            var account = await GetAccountByUserIdAsync(userId);
 
             // Para manejar la concurrencia, vamos a implementar un retry simple.
             int maxRetries = 3;
