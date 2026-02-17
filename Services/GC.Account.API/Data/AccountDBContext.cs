@@ -1,8 +1,23 @@
 using Microsoft.EntityFrameworkCore;
 using GC.Account.API.Models;
+using Microsoft.EntityFrameworkCore.Design;
 
 namespace GC.Account.API.Data
 {
+     public class AccountDbContextFactory 
+        : IDesignTimeDbContextFactory<AccountDbContext>
+    {
+        public AccountDbContext CreateDbContext(string[] args)
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<AccountDbContext>();
+
+            optionsBuilder.UseSqlServer(
+                "Server=.;Database=AccountDB;Trusted_Connection=True;TrustServerCertificate=True");
+
+            return new AccountDbContext(optionsBuilder.Options);
+        }
+    }
+    
     public class AccountDbContext : DbContext
     {
         public AccountDbContext(DbContextOptions<AccountDbContext> options) : base(options) { }
@@ -25,6 +40,10 @@ namespace GC.Account.API.Data
                 .HasOne(t => t.Account)
                 .WithMany(a => a.Transactions)
                 .HasForeignKey(t => t.AccountId);
+
+            modelBuilder.Entity<Models.Account>()
+                .HasIndex(a => a.UserId)
+                .IsUnique();
         }
     }
 }

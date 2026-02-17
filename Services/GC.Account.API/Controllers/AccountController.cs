@@ -4,6 +4,7 @@ using System.Security.Claims;
 using GC.Account.API.Core;
 using GC.Account.API.DTOs;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.EntityFrameworkCore;
 
 namespace GC.Account.API.Controllers
 {
@@ -77,6 +78,10 @@ namespace GC.Account.API.Controllers
             catch (InvalidOperationException ex) // Ej: Reglas de negocio no cumplidas
             {
                 return BadRequest(new { message = ex.Message });
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return Conflict(new { message = "La cuenta fue modificada por otra operación. Por favor, intentá de nuevo." });
             }
             catch (Exception ex)
             {
@@ -167,6 +172,10 @@ namespace GC.Account.API.Controllers
             {
                 // Si el servicio lanza una excepción de "no encontrado", devolvemos 404 con el mensaje específico
                 return NotFound("No tenés una cuenta creada todavía.");
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return Conflict(new { message = "La cuenta fue modificada por otra operación. Por favor, intentá de nuevo." });
             }
             catch (Exception ex)
             {
