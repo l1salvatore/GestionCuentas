@@ -106,7 +106,7 @@ namespace GC.Account.API.Core
                     // Se agrega la transacción al contexto (Relación)
                     _context.Transactions.Add(new Transaction
                     {
-                        AccountId = accountId,
+                        AccountId = account.Id,
                         Amount = amount,
                         Type = TransactionType.Deposit,
                         TransactionDate = DateTime.UtcNow,
@@ -187,7 +187,7 @@ namespace GC.Account.API.Core
                 account.Balance -= amount;
                 _context.Transactions.Add(new Transaction
                 {
-                    AccountId = accountId,
+                    AccountId = account.Id,
                     Amount = -amount,
                     Type = TransactionType.Withdrawal,
                     TransactionDate = DateTime.UtcNow,
