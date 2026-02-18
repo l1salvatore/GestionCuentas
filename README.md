@@ -27,7 +27,7 @@ La aplicación permite a los usuarios autenticados realizar las siguientes accio
 
 ## Requisitos Técnicos
 
-- **Lenguaje**: C# 13
+- **Lenguaje**: C# 14
 - **Framework**: .NET 10
 - **Base de Datos**: SQL Server
 - **Autenticación**: JWT Token (con criptografía RSA)
@@ -326,7 +326,7 @@ Consultar los datos de la cuenta, entre ellos el saldo de una cuenta
 
 **Request:**
 ```
-GET /api/account
+GET /api/account/
 Authorization: Bearer <token>
 ```
 
