@@ -82,6 +82,10 @@ namespace GC.Account.API.Controllers
             catch (DbUpdateConcurrencyException)
             {
                 return Conflict(new { message = "La cuenta fue modificada por otra operación. Por favor, intentá de nuevo." });
+            }       
+            catch (KeyNotFoundException)
+            {
+                return NotFound("Cuenta no encontrada.");
             }
             catch (Exception ex)
             {
@@ -107,6 +111,10 @@ namespace GC.Account.API.Controllers
 
                 // Si llegamos acá, el depósito se realizó con éxito (sin excepciones no controladas)
                 return Ok(new { message = "Depósito realizado con éxito." });
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound("Cuenta no encontrada.");
             }
             catch (Exception ex)
             {
@@ -138,7 +146,7 @@ namespace GC.Account.API.Controllers
             catch (KeyNotFoundException)
             {
                 // Si el servicio lanza una excepción de "no encontrado", devolvemos 404 con el mensaje específico
-                return NotFound("No tenés una cuenta creada todavía.");
+                return NotFound("Cuenta no encontrada.");
             }
             catch (Exception ex)
             {

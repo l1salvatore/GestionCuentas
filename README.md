@@ -108,7 +108,7 @@ En el desarrollo de este proyecto se descargó **docker-desktop** (https://www.d
 
 1. **Clonar el repositorio:**
    ```bash
-   git clone https://github.com/[usuario]/GestionCuentas.git
+   git clone https://github.com/l1salvatore/GestionCuentas
    cd GestionCuentas
    ```
 
@@ -133,7 +133,7 @@ Los servicios estarán disponibles en:
 
 1. **Clonar el repositorio:**
    ```bash
-   git clone https://github.com/[usuario]/GestionCuentas.git
+   git clone https://github.com/l1salvatore/GestionCuentas
    cd GestionCuentas
    ```
 
@@ -157,7 +157,7 @@ Los servicios estarán disponibles en:
    cd ../..
    ```
 
-4. **Ejecutar los servicios:**
+4. **Ejecutar los servicios en dos terminales diferentes:**
 
    Terminal 1 - Auth Service:
    ```bash
@@ -319,6 +319,9 @@ Crear una nueva cuenta
 }
 ```
 
+**Errores posibles:**
+- `500 Internal Server Error` - Error Interno.
+- `401 Unauthorized`  - Credenciales inválidas o Token Invalido
 ---
 
 #### GET /api/account/
@@ -361,6 +364,11 @@ Authorization: Bearer <token>
 }
 ```
 
+**Errores posibles:**
+- `500 Internal Server Error` - Error Interno.
+- `404 Not Found` - Cuenta no encontrada.
+- `401 Unauthorized` - Credenciales inválidas o Token Invalido
+
 ---
 
 #### POST /api/account/deposit
@@ -382,8 +390,9 @@ Realizar un depósito
 
 **Errores posibles:**
 - `400 Bad Request` - El monto debe ser mayor a cero.
-- `500 Internal Server Error` - Cuenta no encontrada
-- `401 Unauthorized` 
+- `500 Internal Server Error` - Error Interno.
+- `404 Not Found` - Cuenta no encontrada.
+- `401 Unauthorized` - Credenciales inválidas o Token Invalido
 - `409 Conflict` - Conflicto de concurrencia (cuenta modificada)
 
 ---
@@ -408,8 +417,9 @@ Realizar un retiro
 **Errores posibles:**
 - `400 Bad Request` - Saldo insuficiente
 - `400 Bad Request` - El monto supera el límite diario permitido. (Máximo 50000)
-- `500 Internal Server Error` - Cuenta no encontrada
-- `401 Unauthorized`
+- `500 Internal Server Error` - Error Interno.
+- `404 Not Found` - Cuenta no encontrada.
+- `401 Unauthorized`- Credenciales inválidas o Token Invalido
 - `409 Conflict` - Conflicto de concurrencia (cuenta modificada)
 
 ---
