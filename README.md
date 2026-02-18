@@ -479,7 +479,7 @@ GO
 
 BEGIN TRANSACTION;
 
--- Creacion de cuenta para el usuario Juan Perez con un balance inicial de 800.00
+-- Creacion del usuario Juan Perez (Registración)
 INSERT INTO Users
 (
     Email,
