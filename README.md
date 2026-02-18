@@ -597,7 +597,7 @@ VALUES (
 );
 
 -- Obtener el AccountId generado para insertar las transacciones correspondientes
-DECLARE @AccountId INT = (SELECT UserId FROM Accounts WHERE UserId = 1);
+DECLARE @AccountId INT = (SELECT Id FROM Accounts WHERE UserId = 1);
 
 -- Inserción de una transacción de 1000.00 (depósito)
 INSERT INTO Transactions (
