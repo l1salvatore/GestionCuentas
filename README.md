@@ -638,34 +638,6 @@ dotnet ef database update
 
 ---
 
-## Características de Seguridad Implementadas
-
-### 1. Autenticación JWT
-- Tokens firmados con RSA
-- Expiración configurables
-- Validación en todos los endpoints protegidos
-
-### 2. Encriptación de Contraseñas
-- Algoritmo PBKDF2 con salt
-- 10,000+ iteraciones
-- Nunca se almacenan passwords en texto plano
-
-### 3. Control de Concurrencia
-- RowVersion (Timestamp) en las tablas
-- Previene actualizaciones conflictivas
-- Detección de cambios simultáneos
-
-### 4. Validaciones de Negocio
-- Saldo suficiente para retiros
-- Montos válidos (positivos)
-- Límites de operaciones (En este caso se asume que en el futuro se implementará límites de operaciones)
-
-### 5. Separación de Responsabilidades
-- Cada servicio maneja un dominio específico
-- Independencia de deployment
-
----
-
 ## Ejemplo de Flujo Completo
 
 ### 1. Registrar usuario
